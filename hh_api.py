@@ -1,0 +1,109 @@
+import requests
+
+from pprint import pprint
+
+HHRU_API_URL = 'https://api.hh.ru/vacancies/'
+
+
+def load_vacancies(hhru_api_url, language):
+    parameters = {
+        'area': '1',
+        'text': language,
+    }
+    response = requests.get(f'{hhru_api_url}', params=parameters)
+    response.raise_for_status()
+    api_response = response.json()
+    return api_response
+
+
+def predict_rub_salary(salary_data):
+    if salary_data:
+        min_salary = salary_data['from']
+        max_salary = salary_data['to']
+        currency = salary_data['currency']
+        if currency == 'RUR':
+            if min_salary is None and max_salary:
+                salary = max_salary * 0.8
+            elif min_salary and max_salary is None:
+                salary = min_salary * 1.2
+            elif min_salary and max_salary:
+                salary = (min_salary + max_salary) / 2
+        else:
+            salary = None
+    else:
+        salary = None
+    return salary
+
+
+def load_vacancies_pages(hhru_api_url, language, vacancies_found):
+    page = 0
+    pages_number = round(vacancies_found / 20)
+
+    parameters = {
+        'area': '1',
+        'text': language,
+        'page': page
+    }
+
+    while page < pages_number:
+        page_response = requests.get(f'{hhru_api_url}', params=parameters)
+        page_response.raise_for_status()
+
+        pages_number = page_response.json()['pages_number']
+        page += 1
+        # TODO добавить данные из page_data в итоговый список
+        full_api_response = page_response.json()
+        print(pages_number)
+        return full_api_response
+
+
+def main():
+    programming_languages = [
+        'Ruby',
+        # 'Javascript', 'Rust', 'Java', 'Python', 'PHP', 'C++', 'C#', 'Go', 'Swift', 'Dart',
+        # 'Flutter', 'Objective-C', 'Scala', 'Typescript', 'Программист C'
+    ]
+
+    research_result = {}
+
+    for language in programming_languages:
+        api_response = load_vacancies(HHRU_API_URL, language)
+        vacancies_found = api_response['found']
+        pages_found = api_response['pages']
+        print(f'Pages found: {pages_found}')
+
+        saved_items = []
+
+        for page in range(pages_found):
+            print(f'Page number: {page}')
+
+            for item in range(20):
+                saved_items.append(api_response['items'])
+
+        pprint(saved_items)
+
+
+            #     salary = predict_rub_salary(api_response['items'][item]['salary'])
+            #     if salary is not None:
+            #         vacancies_for_language += 1
+            #         accumulated_salary += salary
+            #
+            # vacancies_on_page = vacancies_for_language
+            # accumulated_salary_on_page = accumulated_salary
+            # print(vacancies_on_page)
+            # print(accumulated_salary_on_page)
+        #
+        # median_salary = int(accumulated_salary_on_page / vacancies_on_page)
+        #
+        # language_salary_data = {
+        #     "vacancies_found": vacancies_found,
+        #     "vacancies_processed": vacancies_for_language,
+        #     "average_salary": median_salary
+        # }
+        # research_result.update({language: language_salary_data})
+        #
+        # pprint(research_result)
+
+
+if __name__ == "__main__":
+    main()
