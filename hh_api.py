@@ -60,49 +60,38 @@ def load_vacancies_pages(hhru_api_url, language, vacancies_found):
 def main():
     programming_languages = [
         'Ruby',
-        # 'Javascript', 'Rust', 'Java', 'Python', 'PHP', 'C++', 'C#', 'Go', 'Swift', 'Dart',
-        # 'Flutter', 'Objective-C', 'Scala', 'Typescript', 'Программист C'
+        'Javascript', 'Rust', 'Java', 'Python', 'PHP', 'C++', 'C#', 'Go', 'Swift', 'Dart',
+        'Flutter', 'Objective-C', 'Scala', 'Typescript', 'Программист C'
     ]
-
-    research_result = {}
 
     for language in programming_languages:
         api_response = load_vacancies(HHRU_API_URL, language)
         vacancies_found = api_response['found']
         pages_found = api_response['pages']
-        print(f'Pages found: {pages_found}')
 
-        saved_items = []
+        cashed_items = []
+        vacancies_for_language = 0
+        accumulated_salary = 0
 
         for page in range(pages_found):
-            print(f'Page number: {page}')
+            #print(f'Page number: {page}')
 
             for item in range(20):
-                saved_items.append(api_response['items'])
+                cashed_items.append(api_response['items'])
+                salary = predict_rub_salary(api_response['items'][item]['salary'])
+                if salary is not None:
+                    vacancies_for_language += 1
+                    accumulated_salary += predict_rub_salary(api_response['items'][item]['salary'])
 
-        pprint(saved_items)
+        median_salary = int(accumulated_salary / vacancies_for_language)
 
+        language_salary_data = {
+            "vacancies_found": vacancies_found,
+            "vacancies_processed": vacancies_for_language,
+            "average_salary": median_salary
+        }
 
-            #     salary = predict_rub_salary(api_response['items'][item]['salary'])
-            #     if salary is not None:
-            #         vacancies_for_language += 1
-            #         accumulated_salary += salary
-            #
-            # vacancies_on_page = vacancies_for_language
-            # accumulated_salary_on_page = accumulated_salary
-            # print(vacancies_on_page)
-            # print(accumulated_salary_on_page)
-        #
-        # median_salary = int(accumulated_salary_on_page / vacancies_on_page)
-        #
-        # language_salary_data = {
-        #     "vacancies_found": vacancies_found,
-        #     "vacancies_processed": vacancies_for_language,
-        #     "average_salary": median_salary
-        # }
-        # research_result.update({language: language_salary_data})
-        #
-        # pprint(research_result)
+        pprint({language: language_salary_data})
 
 
 if __name__ == "__main__":
