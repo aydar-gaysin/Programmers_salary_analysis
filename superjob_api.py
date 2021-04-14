@@ -5,14 +5,13 @@ from dotenv import load_dotenv
 from pprint import pprint
 from terminaltables import AsciiTable
 
-
 load_dotenv()
 
 SJ_API_URL = 'https://api.superjob.ru/2.20/vacancies/'
 
 programming_languages = [
-    'Ruby', 'Javascript', 'Rust', 'Java', 'Python', 'PHP', 'C++', 'C#', 'Go', 'Swift',
-    'Dart', 'Objective-C', 'Scala', 'Typescript', 'Программист C'
+    '1C', 'C', 'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript',
+    'Objective-C', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'
 ]
 
 
@@ -44,6 +43,8 @@ def predict_rub_salary_sj(vacancy):
             salary = min_salary * 1.2
         elif min_salary and max_salary:
             salary = (min_salary + max_salary) / 2
+        elif min_salary or max_salary == 0:
+            salary = None
         else:
             salary = None
     else:
@@ -51,35 +52,40 @@ def predict_rub_salary_sj(vacancy):
     return salary
 
 
-sj_page_number = 0
-vacancies_quantity = 0
-paid_vacancies_for_language = 0
-accumulated_salary = 0
+result_list = []
 
 for programming_language in programming_languages:
+    vacancies_quantity = 0
+    paid_vacancies_for_language = 0
+    accumulated_salary = 0
+    vacancies_ids = []
+
     for sj_page_number in range(10):
         api_response = load_sj_vacancies(SJ_API_URL, programming_language, sj_page_number)
+
         for vacancy in api_response['objects']:
+            vacancy_id = str(vacancy['id'])
+
+            if vacancy_id in vacancies_ids:
+                continue
+            vacancies_ids.append(vacancy_id)
             salary = predict_rub_salary_sj(vacancy)
             vacancies_quantity += 1
+
             if salary is not None:
                 paid_vacancies_for_language += 1
                 accumulated_salary += predict_rub_salary_sj(vacancy)
 
-    median_salary = int(accumulated_salary / paid_vacancies_for_language)
+    if paid_vacancies_for_language != 0:
+        median_salary = int(accumulated_salary / paid_vacancies_for_language)
+        result_list.append([programming_language, vacancies_quantity, paid_vacancies_for_language, median_salary])
 
-    language_salary_data = {
-        "vacancies_found": vacancies_quantity,
-        "vacancies_processed": paid_vacancies_for_language,
-        "average_salary": median_salary
-    }
+table_data = [
+    ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата']
+]
 
-    #pprint({programming_language: language_salary_data})
-
-    table_data = [
-        ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
-        [programming_language, vacancies_quantity, paid_vacancies_for_language, median_salary]
-    ]
+for item in result_list:
+    table_data.append(item)
 
 title = 'SuperJob Moscow'
 table = AsciiTable(table_data, title)
