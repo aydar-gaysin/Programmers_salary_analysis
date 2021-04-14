@@ -35,28 +35,6 @@ def predict_rub_salary(salary_data):
     return salary
 
 
-def load_vacancies_pages(hhru_api_url, language, vacancies_found):
-    page = 0
-    pages_number = round(vacancies_found / 20)
-
-    parameters = {
-        'area': '1',
-        'text': language,
-        'page': page
-    }
-
-    while page < pages_number:
-        page_response = requests.get(f'{hhru_api_url}', params=parameters)
-        page_response.raise_for_status()
-
-        pages_number = page_response.json()['pages_number']
-        page += 1
-        # TODO добавить данные из page_data в итоговый список
-        full_api_response = page_response.json()
-        print(pages_number)
-        return full_api_response
-
-
 def main():
     programming_languages = [
         'Ruby',
@@ -74,11 +52,11 @@ def main():
         accumulated_salary = 0
 
         for page in range(pages_found):
-            #print(f'Page number: {page}')
 
             for item in range(20):
                 cashed_items.append(api_response['items'])
                 salary = predict_rub_salary(api_response['items'][item]['salary'])
+
                 if salary is not None:
                     vacancies_for_language += 1
                     accumulated_salary += predict_rub_salary(api_response['items'][item]['salary'])
