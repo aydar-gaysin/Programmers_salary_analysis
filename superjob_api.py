@@ -3,6 +3,7 @@ import requests
 
 from dotenv import load_dotenv
 from pprint import pprint
+from terminaltables import AsciiTable
 
 
 load_dotenv()
@@ -73,5 +74,13 @@ for programming_language in programming_languages:
         "average_salary": median_salary
     }
 
-    pprint({programming_language: language_salary_data})
+    #pprint({programming_language: language_salary_data})
 
+    table_data = [
+        ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
+        [programming_language, vacancies_quantity, paid_vacancies_for_language, median_salary]
+    ]
+
+title = 'SuperJob Moscow'
+table = AsciiTable(table_data, title)
+print(table.table)
