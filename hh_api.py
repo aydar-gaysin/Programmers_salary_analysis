@@ -37,9 +37,8 @@ def predict_rub_salary(salary_data):
 
 def main():
     programming_languages = [
-        'Ruby',
-        'Javascript', 'Rust', 'Java', 'Python', 'PHP', 'C++', 'C#', 'Go', 'Swift', 'Dart',
-        'Flutter', 'Objective-C', 'Scala', 'Typescript', 'Программист C'
+        'Ruby', 'Javascript', 'Rust', 'Java', 'Python', 'PHP', 'C++', 'C#', 'Go', 'Swift',
+        'Dart', 'Objective-C', 'Scala', 'Typescript', 'Программист C'
     ]
 
     for language in programming_languages:
