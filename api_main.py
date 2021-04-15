@@ -9,7 +9,7 @@ load_dotenv()
 
 SJ_API_URL = 'https://api.superjob.ru/2.20/vacancies/'
 HH_API_URL = 'https://api.hh.ru/vacancies/'
-programming_languages = [
+PROGRAMMING_LANGUAGES = [
     '1C', 'C', 'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript',
     'Objective-C', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'
 ]
@@ -85,7 +85,7 @@ def predict_rub_salary_hh(salary_data):
 def get_sj_vacancies_data():
     vacancies_analytics = []
 
-    for programming_language in programming_languages:
+    for programming_language in PROGRAMMING_LANGUAGES:
         vacancies_quantity = 0
         paid_vacancies_for_language = 0
         accumulated_salary = 0
@@ -117,7 +117,7 @@ def get_sj_vacancies_data():
 def get_hh_vacancies_data():
     vacancies_analytics = []
 
-    for language in programming_languages:
+    for language in PROGRAMMING_LANGUAGES:
         api_response = load_hh_vacancies(HH_API_URL, language)
         vacancies_found = api_response['found']
         pages_found = api_response['pages']
