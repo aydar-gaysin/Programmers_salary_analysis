@@ -52,7 +52,7 @@ def predict_rub_salary_sj(vacancy):
     return salary
 
 
-result_list = []
+vacancies_analytics = []
 
 for programming_language in programming_languages:
     vacancies_quantity = 0
@@ -78,15 +78,15 @@ for programming_language in programming_languages:
 
     if paid_vacancies_for_language != 0:
         median_salary = int(accumulated_salary / paid_vacancies_for_language)
-        result_list.append([programming_language, vacancies_quantity, paid_vacancies_for_language, median_salary])
+        vacancies_analytics.append([programming_language, vacancies_quantity, paid_vacancies_for_language, median_salary])
 
-table_data = [
+vacancies_analytics_table = [
     ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата']
 ]
 
-for item in result_list:
-    table_data.append(item)
+for dataset in vacancies_analytics:
+    vacancies_analytics_table.append(dataset)
 
 title = 'SuperJob Moscow'
-table = AsciiTable(table_data, title)
+table = AsciiTable(vacancies_analytics_table, title)
 print(table.table)
