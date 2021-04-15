@@ -10,8 +10,8 @@ load_dotenv()
 SJ_API_URL = 'https://api.superjob.ru/2.20/vacancies/'
 HH_API_URL = 'https://api.hh.ru/vacancies/'
 PROGRAMMING_LANGUAGES = [
-    '1C', 'C', 'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript',
-    'Objective-C', 'PHP', 'Python', 'Ruby', 'Rust', 'Scala', 'Swift', 'Typescript'
+    'C++', 'C#', 'Dart', 'Elexir', 'Go', 'Java', 'Javascript',
+    'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
 ]
 
 
