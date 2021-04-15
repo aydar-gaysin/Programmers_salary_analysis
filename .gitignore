@@ -5,6 +5,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Two draft files
+hh_api.py
+superjob_api.py
+
 # C extensions
 *.so
 
