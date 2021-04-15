@@ -46,12 +46,12 @@ Example:
 ```
 ### How to install
 
-Python3 should be already installed. 
+Python3 should be already installed.
+Fork the repo. Copy files to your project directory.
 Then use `pip` (or `pip3`, if there is a conflict with Python2) to install dependencies:
 ```
 pip install -r requirements.txt
 ```
-Fork the repo. Copy api_main.py to your project directory.
 
 ### How to run
 
