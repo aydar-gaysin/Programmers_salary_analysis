@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 from terminaltables import AsciiTable
 
 
-load_dotenv()
-
 SJ_API_URL = 'https://api.superjob.ru/2.20/vacancies/'
 HH_API_URL = 'https://api.hh.ru/vacancies/'
 PROGRAMMING_LANGUAGES = [
@@ -26,9 +24,9 @@ def load_hh_vacancies(hh_api_url, language):
     return api_response
 
 
-def load_sj_vacancies(sj_api_url, programming_language, sj_page_number):
+def load_sj_vacancies(sj_api_key, sj_api_url, programming_language, sj_page_number):
     headers = {
-        'X-Api-App-Id': os.getenv('SJ_API_SECRET_KEY'),
+        'X-Api-App-Id': sj_api_key,
     }
 
     parameters = {
@@ -82,7 +80,7 @@ def predict_rub_salary_hh(salary_data):
     return salary
 
 
-def get_sj_vacancies_data():
+def get_sj_vacancies_data(sj_api_key):
     vacancies_analytics = []
 
     for programming_language in PROGRAMMING_LANGUAGES:
@@ -92,7 +90,7 @@ def get_sj_vacancies_data():
         vacancies_ids = []
 
         for sj_page_number in range(10):
-            api_response = load_sj_vacancies(SJ_API_URL, programming_language, sj_page_number)
+            api_response = load_sj_vacancies(sj_api_key, SJ_API_URL, programming_language, sj_page_number)
 
             for vacancy in api_response['objects']:
                 vacancy_id = str(vacancy['id'])
@@ -155,9 +153,11 @@ def create_terminal_table(vacancies_analytics, title):
 
 
 def main():
+    load_dotenv()
+    sj_api_key = os.getenv('SJ_API_SECRET_KEY')
     sj_title = 'SuperJob Moscow'
     hh_title = 'HeadHunter Moscow'
-    create_terminal_table(get_sj_vacancies_data(), sj_title)
+    create_terminal_table(get_sj_vacancies_data(sj_api_key), sj_title)
     create_terminal_table(get_hh_vacancies_data(), hh_title)
 
 
