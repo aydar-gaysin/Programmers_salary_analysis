@@ -151,7 +151,7 @@ def create_terminal_table(vacancies_analytics, title):
         vacancies_analytics_table.append(dataset)
 
     table = AsciiTable(vacancies_analytics_table, title)
-    print(table.table)
+    return table.table
 
 
 def main():
@@ -159,8 +159,8 @@ def main():
     sj_api_key = os.getenv('SJ_API_SECRET_KEY')
     sj_title = 'SuperJob Moscow'
     hh_title = 'HeadHunter Moscow'
-    create_terminal_table(get_sj_vacancies(sj_api_key), sj_title)
-    create_terminal_table(get_hh_vacancies(), hh_title)
+    print(create_terminal_table(get_sj_vacancies(sj_api_key), sj_title))
+    print(create_terminal_table(get_hh_vacancies(), hh_title))
 
 
 if __name__ == "__main__":
