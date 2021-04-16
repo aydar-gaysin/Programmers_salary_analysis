@@ -10,8 +10,8 @@ HH_API_URL = 'https://api.hh.ru/vacancies/'
 MOSCOW_ID = '1'
 DEVELOPMENT_CATALOGUE_ID = 48
 PROGRAMMING_LANGUAGES = [
-    'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript',
-    'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
+    'C++', 'C#', 'Dart', 'Go', #'Java', 'Javascript',
+    #'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
 ]
 
 
