@@ -8,7 +8,7 @@ from terminaltables import AsciiTable
 SJ_API_URL = 'https://api.superjob.ru/2.20/vacancies/'
 HH_API_URL = 'https://api.hh.ru/vacancies/'
 MOSCOW_ID = '1'
-DEVELOPMENT_CATALOGUE_ID = 48
+CATALOGUE_ID = 48
 PROGRAMMING_LANGUAGES = [
     'C++', 'C#', 'Dart', 'Go', #'Java', 'Javascript',
     #'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
@@ -26,7 +26,7 @@ def load_hh_vacancies(hh_api_url, language):
     return api_response
 
 
-def load_sj_vacancies(sj_api_key, sj_api_url, programming_language, sj_page_number):
+def load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url, programming_language, sj_page_number):
     headers = {
         'X-Api-App-Id': sj_api_key,
     }
@@ -36,7 +36,7 @@ def load_sj_vacancies(sj_api_key, sj_api_url, programming_language, sj_page_numb
         'count': '100',
         'page': sj_page_number,
         'town': 'Москва',
-        'catalogues': DEVELOPMENT_CATALOGUE_ID
+        'catalogues': catalogue_id
     }
     response = requests.get(sj_api_url, headers=headers, params=parameters)
     response.raise_for_status()
@@ -82,17 +82,17 @@ def predict_rub_salary_hh(salary_data):
     return salary
 
 
-def get_sj_vacancies(sj_api_key):
+def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key, sj_api_url):
     vacancies_analytics = []
 
-    for programming_language in PROGRAMMING_LANGUAGES:
+    for programming_language in programming_languages:
         vacancies_quantity = 0
         paid_vacancies_for_language = 0
         accumulated_salary = 0
         vacancies_ids = []
 
         for sj_page_number in range(10):
-            api_response = load_sj_vacancies(sj_api_key, SJ_API_URL, programming_language, sj_page_number)
+            api_response = load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url, programming_language, sj_page_number)
 
             for vacancy in api_response['objects']:
                 vacancy_id = str(vacancy['id'])
@@ -114,10 +114,10 @@ def get_sj_vacancies(sj_api_key):
     return vacancies_analytics
 
 
-def get_hh_vacancies():
+def get_hh_vacancies(programming_languages):
     vacancies_analytics = []
 
-    for language in PROGRAMMING_LANGUAGES:
+    for language in programming_languages:
         api_response = load_hh_vacancies(HH_API_URL, language)
         vacancies_found = api_response['found']
         pages_found = api_response['pages']
@@ -159,8 +159,9 @@ def main():
     sj_api_key = os.getenv('SJ_API_SECRET_KEY')
     sj_title = 'SuperJob Moscow'
     hh_title = 'HeadHunter Moscow'
-    print(create_terminal_table(get_sj_vacancies(sj_api_key), sj_title))
-    print(create_terminal_table(get_hh_vacancies(), hh_title))
+    print(create_terminal_table(get_sj_vacancies(CATALOGUE_ID, PROGRAMMING_LANGUAGES, sj_api_key, SJ_API_URL),
+                                sj_title))
+    print(create_terminal_table(get_hh_vacancies(PROGRAMMING_LANGUAGES), hh_title))
 
 
 if __name__ == "__main__":
