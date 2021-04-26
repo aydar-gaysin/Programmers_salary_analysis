@@ -44,42 +44,36 @@ def load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url, programming_language
     return api_response
 
 
-def predict_rub_salary_sj(vacancy):
-    if vacancy['currency'] == 'rub':
-        min_salary = vacancy['payment_from']
-        max_salary = vacancy['payment_to']
-        if min_salary is None and max_salary:
-            salary = max_salary * 0.8
-        elif min_salary and max_salary is None:
-            salary = min_salary * 1.2
-        elif min_salary and max_salary:
-            salary = (min_salary + max_salary) / 2
-        elif min_salary or max_salary == 0:
-            salary = None
-        else:
-            salary = None
-    else:
-        salary = None
+def calculate_average(min_salary, max_salary):
+    if min_salary == 0 and max_salary:
+        salary = max_salary * 0.8
+    elif min_salary and max_salary == 0:
+        salary = min_salary * 1.2
+    elif min_salary and max_salary:
+        salary = (min_salary + max_salary) / 2
     return salary
+
+
+def predict_rub_salary_sj(vacancy):
+    min_salary = vacancy['payment_from']
+    max_salary = vacancy['payment_to']
+    currency = vacancy['currency']
+    if currency != 'rub':
+        return None
+    if (min_salary and max_salary) != 0:
+        return calculate_average(min_salary, max_salary)
 
 
 def predict_rub_salary_hh(salary_data):
-    if salary_data:
-        min_salary = salary_data['from']
-        max_salary = salary_data['to']
-        currency = salary_data['currency']
-        if currency == 'RUR':
-            if min_salary is None and max_salary:
-                salary = max_salary * 0.8
-            elif min_salary and max_salary is None:
-                salary = min_salary * 1.2
-            elif min_salary and max_salary:
-                salary = (min_salary + max_salary) / 2
-        else:
-            salary = None
-    else:
-        salary = None
-    return salary
+    if not salary_data:
+        return None
+    min_salary = salary_data['from']
+    max_salary = salary_data['to']
+    currency = salary_data['currency']
+    if currency != 'RUR':
+        return None
+    if (min_salary and max_salary) is not None:
+        return calculate_average(min_salary, max_salary)
 
 
 def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key, sj_api_url):
