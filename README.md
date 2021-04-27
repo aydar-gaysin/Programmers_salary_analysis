@@ -67,7 +67,7 @@ Start script:
 ```
 python api_main.py
 ```
-Wait till script finishes collecting and processing data (~60 seconds).
+Wait till script finishes collecting and processing data (~5 minutes).
 
 ### Project Goals
 
