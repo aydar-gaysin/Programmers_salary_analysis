@@ -11,15 +11,16 @@ HH_API_URL = 'https://api.hh.ru/vacancies/'
 MOSCOW_ID = '1'
 CATALOGUE_ID = 48
 PROGRAMMING_LANGUAGES = [
-    'Javascript'#'C++', #'C#', 'Dart', 'Go', 'Java', ,
-    #'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
+    'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript',
+    'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
 ]
 
 
-def load_hh_vacancies(hh_api_url, language):
+def load_hh_vacancies(hh_api_url, language, sj_page_number):
     parameters = {
         'area': MOSCOW_ID,
         'text': language,
+        'page': sj_page_number
     }
     response = requests.get(f'{hh_api_url}', params=parameters)
     response.raise_for_status()
@@ -113,24 +114,23 @@ def get_hh_vacancies(programming_languages):
     vacancies_analytics = []
 
     for language in programming_languages:
-        api_response = load_hh_vacancies(HH_API_URL, language)
+        api_response = load_hh_vacancies(HH_API_URL, language, 0)
         vacancies_found = api_response['found']
         pages_found = api_response['pages']
 
-        cashed_items = []
         vacancies_for_language = 0
         accumulated_salary = 0
 
-        for page in range(pages_found):
-            api_response = load_hh_vacancies(HH_API_URL, language)
-
+        for sj_page_number in range(pages_found):
+            api_response = load_hh_vacancies(HH_API_URL, language, sj_page_number)
             for item in range(20):
-                cashed_items.append(api_response['items'])
-                salary = predict_rub_salary_hh(api_response['items'][item]['salary'])
-
-                if salary is not None:
-                    vacancies_for_language += 1
-                    accumulated_salary += salary
+                try:
+                    salary = predict_rub_salary_hh(api_response['items'][item]['salary'])
+                    if salary is not None:
+                        vacancies_for_language += 1
+                        accumulated_salary += salary
+                except IndexError:
+                    break
 
         median_salary = int(accumulated_salary / vacancies_for_language)
         vacancies_analytics.append(
