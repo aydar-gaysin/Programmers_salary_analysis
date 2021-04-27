@@ -2,6 +2,7 @@ import os
 import requests
 
 from dotenv import load_dotenv
+from itertools import count
 from terminaltables import AsciiTable
 
 
@@ -10,7 +11,7 @@ HH_API_URL = 'https://api.hh.ru/vacancies/'
 MOSCOW_ID = '1'
 CATALOGUE_ID = 48
 PROGRAMMING_LANGUAGES = [
-    'C++', 'C#', 'Dart', 'Go', #'Java', 'Javascript',
+    'Javascript'#'C++', #'C#', 'Dart', 'Go', 'Java', ,
     #'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
 ]
 
@@ -85,21 +86,21 @@ def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key, sj_api_url
         accumulated_salary = 0
         vacancies_ids = []
 
-        for sj_page_number in range(10):
+        for sj_page_number in count():
             api_response = load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url, programming_language, sj_page_number)
-
             for vacancy in api_response['objects']:
                 vacancy_id = str(vacancy['id'])
-
                 if vacancy_id in vacancies_ids:
                     continue
                 vacancies_ids.append(vacancy_id)
                 salary = predict_rub_salary_sj(vacancy)
                 vacancies_quantity += 1
-
                 if salary is not None:
                     paid_vacancies_for_language += 1
                     accumulated_salary += salary
+
+            if api_response['more'] is False:
+                break
 
         if paid_vacancies_for_language != 0:
             median_salary = int(accumulated_salary / paid_vacancies_for_language)
@@ -121,6 +122,7 @@ def get_hh_vacancies(programming_languages):
         accumulated_salary = 0
 
         for page in range(pages_found):
+            api_response = load_hh_vacancies(HH_API_URL, language)
 
             for item in range(20):
                 cashed_items.append(api_response['items'])
