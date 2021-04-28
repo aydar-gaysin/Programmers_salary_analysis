@@ -28,7 +28,8 @@ def load_hh_vacancies(hh_api_url, language, sj_page_number):
     return api_response
 
 
-def load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url, programming_language, sj_page_number):
+def load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url, programming_language,
+                      sj_page_number):
     headers = {
         'X-Api-App-Id': sj_api_key,
     }
@@ -78,7 +79,8 @@ def predict_rub_salary_hh(salary_data):
         return calculate_average(min_salary, max_salary)
 
 
-def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key, sj_api_url):
+def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key,
+                     sj_api_url):
     vacancies_analytics = []
 
     for programming_language in programming_languages:
@@ -88,7 +90,9 @@ def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key, sj_api_url
         vacancies_ids = []
 
         for sj_page_number in count():
-            api_response = load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url, programming_language, sj_page_number)
+            api_response = load_sj_vacancies(catalogue_id, sj_api_key,
+                                             sj_api_url, programming_language,
+                                             sj_page_number)
             for vacancy in api_response['objects']:
                 vacancy_id = str(vacancy['id'])
                 if vacancy_id in vacancies_ids:
@@ -104,9 +108,11 @@ def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key, sj_api_url
                 break
 
         if paid_vacancies_for_language != 0:
-            median_salary = int(accumulated_salary / paid_vacancies_for_language)
+            median_salary = int(accumulated_salary /
+                                paid_vacancies_for_language)
             vacancies_analytics.append(
-                [programming_language, vacancies_quantity, paid_vacancies_for_language, median_salary])
+                [programming_language, vacancies_quantity,
+                 paid_vacancies_for_language, median_salary])
     return vacancies_analytics
 
 
@@ -140,7 +146,8 @@ def get_hh_vacancies(programming_languages):
 
 def create_terminal_table(vacancies_analytics, title):
     vacancies_analytics_table = [
-        ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата']
+        ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано',
+         'Средняя зарплата']
     ]
 
     for dataset in vacancies_analytics:
@@ -155,10 +162,13 @@ def main():
     sj_api_key = os.getenv('SJ_API_SECRET_KEY')
     sj_title = 'SuperJob Moscow'
     hh_title = 'HeadHunter Moscow'
-    print(create_terminal_table(get_sj_vacancies(CATALOGUE_ID, PROGRAMMING_LANGUAGES, sj_api_key, SJ_API_URL),
+    print(create_terminal_table(get_sj_vacancies(CATALOGUE_ID,
+                                                 PROGRAMMING_LANGUAGES,
+                                                 sj_api_key, SJ_API_URL),
                                 sj_title))
-    print(create_terminal_table(get_hh_vacancies(PROGRAMMING_LANGUAGES), hh_title))
+    print(create_terminal_table(get_hh_vacancies(PROGRAMMING_LANGUAGES),
+                                hh_title))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
