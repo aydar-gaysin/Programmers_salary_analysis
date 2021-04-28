@@ -100,7 +100,7 @@ def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key,
                 vacancies_ids.append(vacancy_id)
                 salary = predict_rub_salary_sj(vacancy)
                 vacancies_quantity += 1
-                if salary is not None:
+                if salary:
                     paid_vacancies_for_language += 1
                     accumulated_salary += salary
 
@@ -134,7 +134,7 @@ def get_hh_vacancies(programming_languages):
                 try:
                     salary = predict_rub_salary_hh(api_response['items'][item]
                                                    ['salary'])
-                    if salary is not None:
+                    if salary:
                         vacancies_for_language += 1
                         accumulated_salary += salary
                 except IndexError:
