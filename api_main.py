@@ -11,8 +11,8 @@ HH_API_URL = 'https://api.hh.ru/vacancies/'
 MOSCOW_ID = '1'
 CATALOGUE_ID = 48
 PROGRAMMING_LANGUAGES = [
-    'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript',
-    'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
+    'C++', #'C#', 'Dart', 'Go', 'Java', 'Javascript',
+    #'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
 ]
 
 
@@ -48,9 +48,9 @@ def load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url,
 
 
 def calculate_average(min_salary, max_salary):
-    if min_salary == 0 and max_salary:
+    if not min_salary and max_salary:
         salary = max_salary * 0.8
-    elif min_salary and max_salary == 0:
+    elif min_salary and not max_salary:
         salary = min_salary * 1.2
     elif min_salary and max_salary:
         salary = (min_salary + max_salary) / 2
@@ -63,7 +63,7 @@ def predict_rub_salary_sj(vacancy):
     currency = vacancy['currency']
     if currency != 'rub':
         return None
-    if (min_salary and max_salary) != 0:
+    if min_salary and max_salary:
         return calculate_average(min_salary, max_salary)
 
 
@@ -75,7 +75,7 @@ def predict_rub_salary_hh(salary_data):
     currency = salary_data['currency']
     if currency != 'RUR':
         return None
-    if (min_salary and max_salary) is not None:
+    if min_salary and max_salary:
         return calculate_average(min_salary, max_salary)
 
 
@@ -104,10 +104,10 @@ def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key,
                     paid_vacancies_for_language += 1
                     accumulated_salary += salary
 
-            if api_response['more'] is False:
+            if not api_response['more']:
                 break
 
-        if paid_vacancies_for_language != 0:
+        if paid_vacancies_for_language:
             median_salary = int(accumulated_salary /
                                 paid_vacancies_for_language)
             vacancies_analytics.append(
