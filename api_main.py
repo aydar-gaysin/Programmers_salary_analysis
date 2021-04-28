@@ -28,8 +28,8 @@ def load_hh_vacancies(hh_api_url, language, sj_page_number):
     return api_response
 
 
-def load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url, programming_language,
-                      sj_page_number):
+def load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url,
+                      programming_language, sj_page_number):
     headers = {
         'X-Api-App-Id': sj_api_key,
     }
@@ -128,10 +128,12 @@ def get_hh_vacancies(programming_languages):
         accumulated_salary = 0
 
         for sj_page_number in range(pages_found):
-            api_response = load_hh_vacancies(HH_API_URL, language, sj_page_number)
+            api_response = load_hh_vacancies(HH_API_URL, language,
+                                             sj_page_number)
             for item in range(20):
                 try:
-                    salary = predict_rub_salary_hh(api_response['items'][item]['salary'])
+                    salary = predict_rub_salary_hh(api_response['items'][item]
+                                                   ['salary'])
                     if salary is not None:
                         vacancies_for_language += 1
                         accumulated_salary += salary
