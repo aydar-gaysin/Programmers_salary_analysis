@@ -11,8 +11,8 @@ HH_API_URL = 'https://api.hh.ru/vacancies/'
 MOSCOW_ID = '1'
 CATALOGUE_ID = 48
 PROGRAMMING_LANGUAGES = [
-    'C++', #'C#', 'Dart', 'Go', 'Java', 'Javascript',
-    #'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
+    'C++', 'C#', 'Dart', 'Go', 'Java', 'Javascript',
+    'Objective-C', 'PHP', 'Python', 'Ruby', 'Scala', 'Swift', 'Typescript'
 ]
 
 
@@ -48,6 +48,7 @@ def load_sj_vacancies(catalogue_id, sj_api_key, sj_api_url,
 
 
 def calculate_average(min_salary, max_salary):
+    salary = 0
     if not min_salary and max_salary:
         salary = max_salary * 0.8
     elif min_salary and not max_salary:
@@ -63,8 +64,7 @@ def predict_rub_salary_sj(vacancy):
     currency = vacancy['currency']
     if currency != 'rub':
         return None
-    if min_salary and max_salary:
-        return calculate_average(min_salary, max_salary)
+    return calculate_average(min_salary, max_salary)
 
 
 def predict_rub_salary_hh(salary_data):
@@ -75,8 +75,7 @@ def predict_rub_salary_hh(salary_data):
     currency = salary_data['currency']
     if currency != 'RUR':
         return None
-    if min_salary and max_salary:
-        return calculate_average(min_salary, max_salary)
+    return calculate_average(min_salary, max_salary)
 
 
 def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key,
