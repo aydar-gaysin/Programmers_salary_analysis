@@ -22,7 +22,7 @@ def load_hh_vacancies(hh_api_url, language, sj_page_number):
         'text': language,
         'page': sj_page_number
     }
-    response = requests.get(f'{hh_api_url}', params=parameters)
+    response = requests.get(hh_api_url, params=parameters)
     response.raise_for_status()
     api_response = response.json()
     return api_response
@@ -93,7 +93,7 @@ def get_sj_vacancies(catalogue_id, programming_languages, sj_api_key,
                                              sj_api_url, programming_language,
                                              sj_page_number)
             for vacancy in api_response['objects']:
-                vacancy_id = str(vacancy['id'])
+                vacancy_id = vacancy['id']
                 if vacancy_id in vacancies_ids:
                     continue
                 vacancies_ids.append(vacancy_id)
