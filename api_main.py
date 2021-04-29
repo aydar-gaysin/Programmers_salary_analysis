@@ -131,11 +131,12 @@ def get_hh_vacancies(programming_languages):
                                              sj_page_number)
 
             for item in api_response['items']:
-                if item:
-                    salary = predict_rub_salary_hh(item['salary'])
-                    if salary:
-                        vacancies_for_language += 1
-                        accumulated_salary += salary
+                if not item:
+                    return None
+                salary = predict_rub_salary_hh(item['salary'])
+                if salary:
+                    vacancies_for_language += 1
+                    accumulated_salary += salary
 
         median_salary = int(accumulated_salary / vacancies_for_language)
         vacancies_analytics.append(
